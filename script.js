@@ -1,9 +1,10 @@
 const pieces = document.querySelectorAll('.piece');
+const primaryButton = document.querySelector('.primary-button');
 
 pieces.forEach((piece, index) => {
   piece.addEventListener('mouseenter', () => {
     piece.style.transform = 'translateY(-6px) scale(1.02)';
-    piece.style.boxShadow = '0 16px 24px rgba(139, 92, 246, 0.26)';
+    piece.style.boxShadow = '0 16px 28px rgba(139, 92, 246, 0.28)';
   });
 
   piece.addEventListener('mouseleave', () => {
@@ -14,15 +15,14 @@ pieces.forEach((piece, index) => {
   piece.style.animationDelay = `${index * 0.18}s`;
 });
 
-const primaryButton = document.querySelector('.primary-button');
-
 primaryButton?.addEventListener('click', () => {
+  const original = primaryButton.textContent;
   primaryButton.textContent = 'Challenge started';
   primaryButton.disabled = true;
   primaryButton.style.opacity = '0.9';
 
   setTimeout(() => {
-    primaryButton.textContent = 'Play now';
+    primaryButton.textContent = original;
     primaryButton.disabled = false;
     primaryButton.style.opacity = '1';
   }, 1400);

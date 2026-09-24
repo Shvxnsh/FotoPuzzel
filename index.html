@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FotoPuzzel</title>
+    <title>FotoPuzzel | Photo Puzzle</title>
     <meta
       name="description"
-      content="FotoPuzzel — a vibrant photo puzzle experience inspired by high-energy social reels."
+      content="FotoPuzzel is a fun, fast photo puzzle experience designed for social-first creativity and daily challenge energy."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,26 +17,34 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="noise"></div>
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="orb orb-three"></div>
+
     <div class="page-shell">
       <header class="topbar">
-        <div class="brand-wrap">
+        <div class="brand-wrap" aria-label="FotoPuzzel home">
           <div class="brand-mark">F</div>
           <span>FotoPuzzel</span>
         </div>
-        <nav class="nav">
+
+        <nav class="nav" aria-label="Main navigation">
           <a href="#features">Features</a>
-          <a href="#how-it-works">How it works</a>
+          <a href="#challenge">Challenge</a>
+          <a href="#download">Download</a>
         </nav>
+
         <button class="ghost-button">Get the app</button>
       </header>
 
-      <main class="hero">
+      <main class="hero" id="download">
         <div class="hero-copy">
           <p class="eyebrow">Photo puzzle challenge</p>
-          <h1>Turn snapshots into a creative burst of fun.</h1>
+          <h1>Turn every photo into a spark of obsession.</h1>
           <p class="subtext">
-            Piece together memories, unlock surprise moments, and turn every photo
-            into your next viral story moment.
+            Match, shuffle, and solve your favorite moments in fast-paced puzzle rounds
+            built for creators, dreamers, and social-first challenge lovers.
           </p>
 
           <div class="cta-row">
@@ -44,29 +52,39 @@
             <button class="secondary-button">Watch demo</button>
           </div>
 
-          <div class="stats">
-            <div>
+          <div class="trust-row" aria-label="Performance stats">
+            <div class="trust-item">
               <strong>3.2k</strong>
               <span>solved today</span>
             </div>
-            <div>
+            <div class="trust-item">
               <strong>4.9/5</strong>
               <span>player rating</span>
             </div>
-            <div>
+            <div class="trust-item">
               <strong>18s</strong>
               <span>avg. round</span>
             </div>
           </div>
         </div>
 
-        <div class="showcase" aria-label="Puzzle showcase">
+        <div class="showcase" aria-label="Puzzle preview">
+          <div class="floating-card card-top">
+            <span class="chip success">Daily streak</span>
+            <strong>+238</strong>
+          </div>
+
+          <div class="floating-card card-mid">
+            <span class="chip">New theme</span>
+            <strong>Neon Nights</strong>
+          </div>
+
           <div class="phone-frame">
             <div class="phone-notch"></div>
             <div class="phone-screen">
               <div class="screen-header">
                 <div class="avatar"></div>
-                <div>
+                <div class="label-wrap">
                   <small>Daily challenge</small>
                   <strong>Sunset Rush</strong>
                 </div>
@@ -104,41 +122,41 @@
         <article class="feature-card">
           <div class="icon-wrap purple">⚡</div>
           <h3>Fast rounds</h3>
-          <p>Quick, addictive puzzle sessions that feel perfect for short-form social moments.</p>
+          <p>Quick, addictive puzzle sessions built for short-form attention and instant replay energy.</p>
         </article>
         <article class="feature-card">
           <div class="icon-wrap pink">🎨</div>
           <h3>Creative flair</h3>
-          <p>Dynamic layouts and bold colors turn each puzzle into a little visual moment.</p>
+          <p>Bold layouts and elevated visuals make each puzzle feel like a mini social moment.</p>
         </article>
         <article class="feature-card">
           <div class="icon-wrap gold">🏆</div>
           <h3>Daily streaks</h3>
-          <p>Earn rewards, unlock new moods, and keep your challenge rhythm alive every day.</p>
+          <p>Unlock rewards, chase new challenges, and stay hooked with every solved memory.</p>
         </article>
       </section>
 
-      <section class="steps" id="how-it-works">
+      <section class="steps" id="challenge">
         <div class="section-head">
           <p class="eyebrow alt">How it works</p>
-          <h2>From photo to puzzle in three steps.</h2>
+          <h2>From photo to puzzle in 3 steps.</h2>
         </div>
 
         <div class="steps-grid">
           <div class="step-item">
             <span>01</span>
             <h3>Pick a photo</h3>
-            <p>Upload a favorite moment or choose a curated challenge from the feed.</p>
+            <p>Upload a favorite memory or choose a curated challenge from the daily feed.</p>
           </div>
           <div class="step-item">
             <span>02</span>
             <h3>Shuffle the pieces</h3>
-            <p>Watch the board remix patterns and turn your image into a playful challenge.</p>
+            <p>Experience a fresh remix of your image with quick, rhythmic challenge mechanics.</p>
           </div>
           <div class="step-item">
             <span>03</span>
-            <h3>Unlock the reveal</h3>
-            <p>Solve it, save the memory, and share the moment with your community.</p>
+            <h3>Reveal the reward</h3>
+            <p>Solve it, share the moment, and keep the streak alive with a satisfying finish.</p>
           </div>
         </div>
       </section>
