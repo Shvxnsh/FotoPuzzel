@@ -3,165 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FotoPuzzel | Photo Puzzle</title>
-    <meta
-      name="description"
-      content="FotoPuzzel is a fun, fast photo puzzle experience designed for social-first creativity and daily challenge energy."
-    />
+    <title>Puzzle Cam | FotoPuzzel</title>
+    <meta name="description" content="Use your hands to frame a photo and turn it into a puzzle with FotoPuzzel." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="noise"></div>
-    <div class="orb orb-one"></div>
-    <div class="orb orb-two"></div>
-    <div class="orb orb-three"></div>
-
-    <div class="page-shell">
-      <header class="topbar">
-        <div class="brand-wrap" aria-label="FotoPuzzel home">
-          <div class="brand-mark">F</div>
-          <span>FotoPuzzel</span>
-        </div>
-
-        <nav class="nav" aria-label="Main navigation">
-          <a href="#features">Features</a>
-          <a href="#challenge">Challenge</a>
-          <a href="#download">Download</a>
-        </nav>
-
-        <button class="ghost-button">Get the app</button>
+    <main class="app-shell">
+      <header class="app-bar">
+        <a class="brand" href="#top"><span class="brand-mark">F</span><span>FOTOPUZZEL</span></a>
+        <div class="mode-label"><span class="live-dot"></span> PUZZLE-CAM <small>HAND-FRAME CAPTURE</small></div>
+        <div class="header-actions"><span class="connection"><i></i> CAMERA READY</span><button class="icon-button" id="helpButton" aria-label="Open help">?</button></div>
       </header>
 
-      <main class="hero" id="download">
-        <div class="hero-copy">
-          <p class="eyebrow">Photo puzzle challenge</p>
-          <h1>Turn every photo into a spark of obsession.</h1>
-          <p class="subtext">
-            Match, shuffle, and solve your favorite moments in fast-paced puzzle rounds
-            built for creators, dreamers, and social-first challenge lovers.
-          </p>
-
-          <div class="cta-row">
-            <button class="primary-button">Play now</button>
-            <button class="secondary-button">Watch demo</button>
-          </div>
-
-          <div class="trust-row" aria-label="Performance stats">
-            <div class="trust-item">
-              <strong>3.2k</strong>
-              <span>solved today</span>
-            </div>
-            <div class="trust-item">
-              <strong>4.9/5</strong>
-              <span>player rating</span>
-            </div>
-            <div class="trust-item">
-              <strong>18s</strong>
-              <span>avg. round</span>
-            </div>
-          </div>
+      <section class="workspace" id="top">
+        <div class="camera-stage">
+          <video id="camera" autoplay playsinline muted></video>
+          <canvas id="handCanvas"></canvas>
+          <div class="camera-shade"></div>
+          <div class="camera-topline"><span id="cameraStatus">ALLOW CAMERA ACCESS TO START</span><span id="timer">READY</span></div>
+          <div class="frame-guide" id="frameGuide"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><div class="frame-label">FRAME YOUR PHOTO</div><div class="countdown" id="countdown"></div></div>
+          <div class="camera-empty" id="cameraEmpty"><div class="camera-icon">⌁</div><h1>Camera puzzle</h1><p>Let FotoPuzzel see your camera and turn a hand-framed moment into a puzzle.</p><button class="start-button" id="startButton">Enable camera</button></div>
+          <div class="gesture-hint" id="gestureHint"><span class="gesture-icon">✋</span><div><strong>Show both hands</strong><small>Move them apart to frame your shot</small></div></div>
+          <div class="camera-controls"><button class="control-button" id="flipButton" aria-label="Flip camera">↔</button><button class="capture-button" id="captureButton" disabled><span></span><b>CAPTURE</b></button><button class="control-button" id="resetButton" aria-label="Reset puzzle">↻</button></div>
         </div>
 
-        <div class="showcase" aria-label="Puzzle preview">
-          <div class="floating-card card-top">
-            <span class="chip success">Daily streak</span>
-            <strong>+238</strong>
-          </div>
-
-          <div class="floating-card card-mid">
-            <span class="chip">New theme</span>
-            <strong>Neon Nights</strong>
-          </div>
-
-          <div class="phone-frame">
-            <div class="phone-notch"></div>
-            <div class="phone-screen">
-              <div class="screen-header">
-                <div class="avatar"></div>
-                <div class="label-wrap">
-                  <small>Daily challenge</small>
-                  <strong>Sunset Rush</strong>
-                </div>
-                <span class="score-pill">+238</span>
-              </div>
-
-              <div class="puzzle-board">
-                <div class="piece piece-a"></div>
-                <div class="piece piece-b"></div>
-                <div class="piece piece-c"></div>
-                <div class="piece piece-d"></div>
-                <div class="piece piece-e"></div>
-                <div class="piece piece-f"></div>
-                <div class="piece piece-g"></div>
-                <div class="piece piece-h"></div>
-                <div class="piece piece-i"></div>
-              </div>
-
-              <div class="screen-footer">
-                <div class="mini-card">
-                  <span>Level</span>
-                  <strong>8/12</strong>
-                </div>
-                <div class="mini-card accent">
-                  <span>Time</span>
-                  <strong>02:11</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <section class="feature-grid" id="features">
-        <article class="feature-card">
-          <div class="icon-wrap purple">⚡</div>
-          <h3>Fast rounds</h3>
-          <p>Quick, addictive puzzle sessions built for short-form attention and instant replay energy.</p>
-        </article>
-        <article class="feature-card">
-          <div class="icon-wrap pink">🎨</div>
-          <h3>Creative flair</h3>
-          <p>Bold layouts and elevated visuals make each puzzle feel like a mini social moment.</p>
-        </article>
-        <article class="feature-card">
-          <div class="icon-wrap gold">🏆</div>
-          <h3>Daily streaks</h3>
-          <p>Unlock rewards, chase new challenges, and stay hooked with every solved memory.</p>
-        </article>
+        <aside class="side-panel">
+          <div class="panel-heading"><div><span class="kicker">TUTORIAL</span><h2>Hands in frame</h2></div><span class="step-count">01 / 03</span></div>
+          <div class="tutorial-art"><div class="mini-frame"><span class="mini-hand left-hand">✋</span><span class="mini-hand right-hand">✋</span><span class="mini-crosshair">＋</span></div></div>
+          <p class="instruction" id="instruction">Place both hands in front of the camera. Your hands become the frame.</p>
+          <div class="progress"><span class="active"></span><span></span><span></span></div>
+          <div class="tips"><div><span>01</span><p>Show both hands<br /><small>Keep your palms visible</small></p></div><div><span>02</span><p>Spread your hands<br /><small>Fit your memory inside</small></p></div><div><span>03</span><p>Capture the moment<br /><small>We make the puzzle</small></p></div></div>
+          <button class="secondary-action" id="demoButton">Try with demo image <span>→</span></button>
+        </aside>
       </section>
 
-      <section class="steps" id="challenge">
-        <div class="section-head">
-          <p class="eyebrow alt">How it works</p>
-          <h2>From photo to puzzle in 3 steps.</h2>
-        </div>
+      <footer class="status-bar"><span><b>GESTURE</b> Two hands to frame · Pinch to capture</span><span id="trackingStatus">WAITING FOR CAMERA</span><span><b>ESC</b> reset · <b>?</b> help</span></footer>
+    </main>
 
-        <div class="steps-grid">
-          <div class="step-item">
-            <span>01</span>
-            <h3>Pick a photo</h3>
-            <p>Upload a favorite memory or choose a curated challenge from the daily feed.</p>
-          </div>
-          <div class="step-item">
-            <span>02</span>
-            <h3>Shuffle the pieces</h3>
-            <p>Experience a fresh remix of your image with quick, rhythmic challenge mechanics.</p>
-          </div>
-          <div class="step-item">
-            <span>03</span>
-            <h3>Reveal the reward</h3>
-            <p>Solve it, share the moment, and keep the streak alive with a satisfying finish.</p>
-          </div>
-        </div>
-      </section>
-    </div>
+    <div class="modal hidden" id="helpModal"><div class="modal-card"><button class="modal-close" id="closeHelp">×</button><span class="kicker">HOW TO PLAY</span><h2>Make a puzzle with your hands.</h2><p>Allow camera access, show both hands, and move them apart so the yellow frame contains the moment you want to capture. Press Capture to freeze the image and start your puzzle.</p><button class="start-button" id="modalStart">Got it</button></div></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
