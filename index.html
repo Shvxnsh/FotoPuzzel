@@ -1,53 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Puzzle Cam | FotoPuzzel</title>
-    <meta name="description" content="Use your hands to frame a photo and turn it into a puzzle with FotoPuzzel." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="app-shell">
-      <header class="app-bar">
-        <a class="brand" href="#top"><span class="brand-mark">F</span><span>FOTOPUZZEL</span></a>
-        <div class="mode-label"><span class="live-dot"></span> PUZZLE-CAM <small>PINCH-FRAME CAPTURE</small></div>
-        <div class="header-actions"><span class="connection"><i></i> CAMERA READY</span><button class="icon-button" id="helpButton" aria-label="Open help">?</button></div>
-      </header>
-
-      <section class="workspace" id="top">
-        <div class="camera-stage">
-          <video id="camera" autoplay playsinline muted></video>
-          <canvas id="handCanvas"></canvas>
-          <div class="camera-shade"></div>
-          <div class="camera-topline"><span id="cameraStatus">ALLOW CAMERA ACCESS TO START</span><span id="timer">READY</span></div>
-          <div class="frame-guide" id="frameGuide"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><div class="frame-label">PINCH TO MOVE · SPREAD TO RESIZE</div><div class="countdown" id="countdown"></div></div>
-          <div class="camera-empty" id="cameraEmpty"><div class="camera-icon">⌁</div><h1>Camera puzzle</h1><p>Let FotoPuzzel see your camera. Pinch with both hands to position the frame, then make a fist to take the photo.</p><button class="start-button" id="startButton">Enable camera</button></div>
-          <div class="gesture-hint" id="gestureHint"><span class="gesture-icon">✌</span><div><strong>Pinch to frame</strong><small>Spread or move both pinches to adjust</small></div></div>
-          <div class="camera-controls"><button class="control-button" id="flipButton" aria-label="Flip camera">↔</button><button class="capture-button" id="captureButton" disabled><span></span><b>MAKE A FIST TO CAPTURE</b></button><button class="control-button" id="resetButton" aria-label="Reset frame">↻</button></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Puzzle Photo Booth</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #1e1e1e; color: #d4d4d4; font-family: 'Courier New', Courier, monospace; display: flex; height: 100vh; overflow: hidden; }
+        #log-panel { width: 25%; background-color: #1e1e1e; border-right: 1px solid #333; padding: 10px; overflow-y: auto; font-size: 12px; box-sizing: border-box; }
+        #main-panel { width: 55%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background-color: #252526; }
+        #camera-container { position: relative; width: min(640px, 92%); aspect-ratio: 4 / 3; background-color: #000; overflow: hidden; }
+        video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+        #status-text { position: absolute; top: 10px; right: 10px; z-index: 20; background: rgba(0,0,0,.65); padding: 5px 10px; border-radius: 5px; }
+        #countdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; color: #eebb00; z-index: 20; display: none; text-shadow: 2px 2px 4px #000; }
+        #strip-panel { width: 20%; background-color: #efefef; color: #333; display: flex; flex-direction: column; align-items: center; padding: 20px 0; overflow-y: auto; box-sizing: border-box; }
+        .photo-strip-image { width: 80%; margin-bottom: 15px; border: 5px solid white; box-shadow: 0 4px 8px rgba(0,0,0,.2); filter: grayscale(100%); }
+        #test-capture-btn { margin-top: 20px; padding: 10px; cursor: pointer; }
+        @media (max-width: 800px) { body { overflow: auto; height: auto; min-height: 100vh; flex-direction: column; } #log-panel, #main-panel, #strip-panel { width: 100%; } #log-panel { max-height: 130px; } #main-panel { min-height: 62vh; padding: 18px 0; } #strip-panel { min-height: 180px; } }
+    </style>
+</head>
+<body>
+    <div id="log-panel"><p>// Application starting...</p><div id="debug-logs"></div></div>
+    <div id="main-panel">
+        <div id="status-text">ESPERANDO MANOS...</div>
+        <div id="camera-container">
+            <video id="input_video" autoplay playsinline muted></video>
+            <canvas id="output_canvas" width="640" height="480"></canvas>
+            <div id="countdown">3</div>
         </div>
+        <button id="test-capture-btn" type="button">Test Capture (Debug)</button>
+    </div>
+    <div id="strip-panel"><h3>TIRA</h3><div id="photos-container"></div></div>
+    <script>
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const logPanel = document.getElementById('debug-logs');
+        const statusText = document.getElementById('status-text');
+        const cameraContainer = document.getElementById('camera-container');
+        const FRAME = { x: 170, y: 90, size: 300 };
+        let appState = 'WAITING';
 
-        <aside class="side-panel">
-          <div class="panel-heading"><div><span class="kicker">GESTURE GUIDE</span><h2>Frame with your hands</h2></div><span class="step-count">01 / 03</span></div>
-          <div class="tutorial-art"><div class="mini-frame"><span class="mini-hand left-hand">🤏</span><span class="mini-hand right-hand">🤏</span><span class="mini-crosshair">＋</span></div></div>
-          <p class="instruction" id="instruction">Pinch with both hands. Move the pinches apart to make the frame larger, or together to make it smaller.</p>
-          <div class="progress"><span class="active"></span><span></span><span></span></div>
-          <div class="tips"><div><span>01</span><p>Pinch both hands<br /><small>Thumb and index finger together</small></p></div><div><span>02</span><p>Adjust the frame<br /><small>Move or spread your pinches</small></p></div><div><span>03</span><p>Make a fist<br /><small>Your photo clicks instantly</small></p></div></div>
-          <button class="secondary-action" id="demoButton">Try with demo image <span>→</span></button>
-        </aside>
-      </section>
+        function log(message) {
+            const entry = document.createElement('p');
+            entry.textContent = `> ${message}`;
+            logPanel.appendChild(entry);
+            logPanel.parentElement.scrollTop = logPanel.parentElement.scrollHeight;
+        }
 
-      <footer class="status-bar"><span><b>GESTURE</b> Pinch to position · Fist to capture</span><span id="trackingStatus">WAITING FOR CAMERA</span><span><b>ESC</b> reset · <b>?</b> help</span></footer>
-    </main>
+        function resizeCanvas() {
+            const width = videoElement.videoWidth || 640;
+            const height = videoElement.videoHeight || 480;
+            if (canvasElement.width !== width || canvasElement.height !== height) {
+                canvasElement.width = width;
+                canvasElement.height = height;
+            }
+        }
 
-    <div class="modal hidden" id="helpModal"><div class="modal-card"><button class="modal-close" id="closeHelp">×</button><span class="kicker">HOW TO PLAY</span><h2>Pinch. Frame. Fist. Click.</h2><p>Allow camera access, pinch with both hands, and move the pinch points to place the yellow frame. Spread them apart or together to resize it. When you are happy with the composition, make a fist with either hand and FotoPuzzel will capture the photo automatically.</p><button class="start-button" id="modalStart">Got it</button></div></div>
+        function distance(a, b) {
+            return Math.hypot(a.x - b.x, a.y - b.y);
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-    <script src="script.js"></script>
-  </body>
+        const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+        hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+        hands.onResults((results) => {
+            resizeCanvas();
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            const scaleX = canvasElement.width / 640;
+            const scaleY = canvasElement.height / 480;
+            const frameSize = FRAME.size * Math.min(scaleX, scaleY);
+            const frameX = (canvasElement.width - frameSize) / 2;
+            const frameY = (canvasElement.height - frameSize) / 2;
+
+            if (appState !== 'PUZZLE') {
+                canvasCtx.strokeStyle = '#47e7ff';
+                canvasCtx.lineWidth = 3;
+                canvasCtx.strokeRect(frameX, frameY, frameSize, frameSize);
+                canvasCtx.strokeStyle = 'rgba(71,231,255,.35)';
+                canvasCtx.lineWidth = 1;
+                canvasCtx.strokeRect(frameX + 10, frameY + 10, frameSize - 20, frameSize - 20);
+            }
+
+            const detected = results.multiHandLandmarks || [];
+            statusText.textContent = detected.length ? 'MANOS EN SEGUIMIENTO' : 'ESPERANDO MANOS...';
+            detected.forEach((landmarks) => {
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00ff88', lineWidth: 2 });
+                drawLandmarks(canvasCtx, landmarks, { color: '#ff4444', lineWidth: 1, radius: 2 });
+                if (distance(landmarks[4], landmarks[8]) < 0.05) log('Pinch detected!');
+            });
+            canvasCtx.restore();
+        });
+
+        async function startCamera() {
+            try {
+                if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera API is unavailable. Use HTTPS or localhost.');
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+                videoElement.srcObject = stream;
+                await videoElement.play();
+                log('Camera started.');
+            } catch (error) {
+                statusText.textContent = 'CAMERA ERROR';
+                log(error.message);
+                console.error(error);
+            }
+        }
+
+        const camera = new Camera(videoElement, { onFrame: async () => hands.send({ image: videoElement }), width: 640, height: 480 });
+        camera.start();
+        startCamera();
+
+        document.getElementById('test-capture-btn').addEventListener('click', takeSnapshot);
+
+        function takeSnapshot() {
+            if (!videoElement.videoWidth) { log('Camera is not ready yet.'); return; }
+            log('Capturing image...');
+            const tempCanvas = document.createElement('canvas');
+            const size = Math.min(videoElement.videoWidth, videoElement.videoHeight);
+            tempCanvas.width = 300;
+            tempCanvas.height = 300;
+            const sourceX = (videoElement.videoWidth - size) / 2;
+            const sourceY = (videoElement.videoHeight - size) / 2;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.save();
+            tempCtx.translate(300, 0);
+            tempCtx.scale(-1, 1);
+            tempCtx.drawImage(videoElement, sourceX, sourceY, size, size, 0, 0, 300, 300);
+            tempCtx.restore();
+
+            const imgElement = document.createElement('img');
+            imgElement.src = tempCanvas.toDataURL('image/png');
+            imgElement.alt = 'Captured puzzle photo';
+            imgElement.className = 'photo-strip-image';
+            document.getElementById('photos-container').prepend(imgElement);
+            log('Image added to Tira.');
+        }
+    </script>
+</body>
 </html>
