@@ -3,7 +3,6 @@
   --paper: #efeee9;
   --yellow: #f2d329;
   --cyan: #47e7ff;
-  --cyan-soft: rgba(71, 231, 255, 0.2);
   --bg: #d9d8d3;
   --panel: #f7f6f1;
   --line: rgba(23, 21, 21, 0.18);
@@ -49,6 +48,7 @@ button {
   padding: 0 6px;
   font: 11px var(--mono);
   letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .brand {
@@ -71,15 +71,15 @@ button {
   font-size: 14px;
 }
 
-.status-pill {
+.mode-pill {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   color: var(--muted);
 }
 
-.dot {
+.live-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -99,9 +99,9 @@ button {
 .icon-button {
   width: 28px;
   height: 28px;
+  justify-self: end;
   border: 1px solid var(--line);
   border-radius: 50%;
-  justify-self: end;
 }
 
 .workspace {
@@ -111,10 +111,6 @@ button {
   flex: 1;
   min-height: calc(100vh - 120px);
   padding: 8px 0 15px;
-}
-
-.stage-wrap {
-  min-height: 660px;
 }
 
 .camera-stage {
@@ -127,7 +123,7 @@ button {
 }
 
 #camera,
-#handsCanvas {
+#handCanvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -136,16 +132,16 @@ button {
   transform: scaleX(-1);
 }
 
-#handsCanvas {
+#handCanvas {
   z-index: 2;
   pointer-events: none;
 }
 
-.camera-overlay {
+.camera-shade {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(0,0,0,0.38), transparent 17%, transparent 78%, rgba(0,0,0,0.58));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.38), transparent 17%, transparent 78%, rgba(0, 0, 0, 0.58));
   pointer-events: none;
 }
 
@@ -173,42 +169,40 @@ button {
   color: white;
 }
 
-.viewfinder {
+.frame-guide {
   position: absolute;
   z-index: 3;
-  top: 14%;
   left: 20%;
+  top: 14%;
   width: 60%;
   height: 72%;
-  border: 2px solid rgba(71, 231, 255, 0.7);
+  border: 2px solid rgba(71, 231, 255, 0.75);
   background: linear-gradient(rgba(71, 231, 255, 0.03), rgba(71, 231, 255, 0.03)),
     repeating-linear-gradient(0deg, transparent 0 9px, rgba(71, 231, 255, 0.12) 10px 11px);
-  box-shadow:
-    inset 0 0 0 1px rgba(71, 231, 255, 0.24),
+  box-shadow: inset 0 0 0 1px rgba(71, 231, 255, 0.24),
     inset 0 0 28px rgba(71, 231, 255, 0.15),
     0 0 0 9999px rgba(6, 15, 20, 0.18),
-    0 0 0 1px rgba(71, 231, 255, 0.2);
+    0 0 0 1px rgba(71, 231, 255, 0.24);
   transition: left 0.12s ease-out, top 0.12s ease-out, width 0.12s ease-out, height 0.12s ease-out,
     border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.viewfinder.ready {
+.frame-guide.ready {
   border-color: rgba(185, 247, 255, 1);
-  box-shadow:
-    inset 0 0 0 1px rgba(185, 247, 255, 0.52),
+  box-shadow: inset 0 0 0 1px rgba(185, 247, 255, 0.52),
     inset 0 0 32px rgba(71, 231, 255, 0.25),
     0 0 0 9999px rgba(6, 15, 20, 0.22),
     0 0 0 1px rgba(185, 247, 255, 0.45);
 }
 
-.viewfinder::before {
+.frame-guide::before {
   content: "";
   position: absolute;
   inset: 10px;
   border: 1px dashed rgba(185, 247, 255, 0.75);
 }
 
-.viewfinder::after {
+.frame-guide::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -221,6 +215,20 @@ button {
   box-shadow: 0 0 0 5px rgba(71, 231, 255, 0.1);
 }
 
+.corner {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  border-color: var(--cyan);
+  border-style: solid;
+  z-index: 1;
+}
+
+.tl { left: -2px; top: -2px; border-width: 3px 0 0 3px; }
+.tr { right: -2px; top: -2px; border-width: 3px 3px 0 0; }
+.bl { left: -2px; bottom: -2px; border-width: 0 0 3px 3px; }
+.br { right: -2px; bottom: -2px; border-width: 0 3px 3px 0; }
+
 .frame-label {
   position: absolute;
   top: -25px;
@@ -231,40 +239,41 @@ button {
   text-transform: uppercase;
 }
 
-.frame-center {
+.gesture-pill {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 0 52%, rgba(0,0,0,0.12) 52% 58%, transparent 58% 100%);
+  z-index: 5;
+  left: 28px;
+  bottom: 88px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(15, 15, 15, 0.68);
+  color: white;
+  border-left: 3px solid var(--cyan);
 }
 
-.corner {
-  position: absolute;
-  width: 38px;
-  height: 38px;
-  border-color: var(--cyan);
-  border-style: solid;
-  z-index: 1;
+.gesture-pill strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
 }
 
-.tl {
-  top: -2px;
-  left: -2px;
-  border-width: 3px 0 0 3px;
+.gesture-pill small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
 }
-.tr {
-  top: -2px;
-  right: -2px;
-  border-width: 3px 3px 0 0;
-}
-.bl {
-  left: -2px;
-  bottom: -2px;
-  border-width: 0 0 3px 3px;
-}
-.br {
-  right: -2px;
-  bottom: -2px;
-  border-width: 0 3px 3px 0;
+
+.gesture-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  font-size: 18px;
 }
 
 .camera-empty {
@@ -276,7 +285,7 @@ button {
   justify-items: center;
   padding: 28px;
   text-align: center;
-  background: rgba(24, 24, 24, 0.3);
+  background: rgba(24, 24, 24, 0.32);
   backdrop-filter: blur(2px);
   color: white;
 }
@@ -324,8 +333,8 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-width: 230px;
+  gap: 10px;
+  min-width: 220px;
   min-height: 52px;
   border-radius: 999px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -350,43 +359,6 @@ button {
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.06);
 }
 
-.gesture-pill {
-  position: absolute;
-  z-index: 5;
-  left: 28px;
-  bottom: 88px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: rgba(15, 15, 15, 0.68);
-  color: white;
-  border-left: 3px solid var(--cyan);
-}
-
-.gesture-pill strong {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.gesture-pill small {
-  display: block;
-  color: rgba(255, 255, 255, 0.7);
-  margin-top: 4px;
-  font-size: 11px;
-}
-
-.gesture-icon {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  font-size: 18px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 50%;
-}
-
 .camera-controls {
   bottom: 18px;
   justify-content: center;
@@ -397,14 +369,14 @@ button {
   width: 38px;
   height: 38px;
   color: white;
-  border: 1px solid rgba(255,255,255,0.45);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 50%;
   font-size: 18px;
 }
 
 .side-panel {
   background: var(--panel);
-  border: 1px solid rgba(0,0,0,0.13);
+  border: 1px solid rgba(0, 0, 0, 0.13);
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
@@ -418,7 +390,7 @@ button {
 }
 
 .kicker {
-  color: #8b8883;
+  color: var(--muted);
   font: 10px var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -437,9 +409,9 @@ button {
 }
 
 .instruction {
-  margin: 0;
+  margin: 18px 0 0;
   color: #4e4b47;
-  font: 13px/1.65 var(--mono);
+  font: 13px/1.7 var(--mono);
 }
 
 .progress {
@@ -502,7 +474,7 @@ button {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
 }
 
 .modal.hidden {
@@ -514,7 +486,7 @@ button {
   max-width: 540px;
   padding: 28px 28px 20px;
   background: white;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: var(--shadow);
 }
 
@@ -538,13 +510,27 @@ button {
   font-size: 15px;
 }
 
+body.captured::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.92);
+  pointer-events: none;
+  animation: camera-flash 0.34s ease-out forwards;
+}
+
+@keyframes camera-flash {
+  from { opacity: 0.95; }
+  to { opacity: 0; }
+}
+
 @media (max-width: 900px) {
   .workspace {
     grid-template-columns: 1fr;
   }
 
-  .camera-stage,
-  .stage-wrap {
+  .camera-stage {
     min-height: 70vh;
   }
 
@@ -565,12 +551,11 @@ button {
     padding: 8px 2px 15px;
   }
 
-  .status-pill {
+  .mode-pill {
     display: none;
   }
 
-  .camera-stage,
-  .stage-wrap {
+  .camera-stage {
     min-height: 60vh;
   }
 
