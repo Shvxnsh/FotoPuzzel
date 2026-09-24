@@ -1,0 +1,4 @@
+/* Capture feedback */
+body.captured::after { content: ""; position: fixed; inset: 0; z-index: 50; background: #fff; pointer-events: none; animation: camera-flash .34s ease-out forwards; }
+@keyframes camera-flash { from { opacity: .95; } to { opacity: 0; } }
+.frame-guide { transition: left .12s ease-out, top .12s ease-out, width .12s ease-out, height .12s ease-out, border-color .2s, box-shadow .2s; }
